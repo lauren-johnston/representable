@@ -70,17 +70,31 @@ function newBoundariesLayer(name) {
   map.addLayer(
     {
       id: name + "-lines",
-      type: "line",
+      type: "fill",
       source: name,
       "source-layer": "boundaries_" + BOUNDARIES_ABBREV[removeLastChar(name)] + "_" + name.slice(-1),
       layout: {
         visibility: "none"
       },
       paint: {
-        "line-color": "rgba(106,137,204,0.7)",
+        "fill-outline-color": "rgba(0,0,0,0.3)",
+        "fill-color": "rgba(0,0,0,0)",
       }
     }
   );
+  // Set polygon fill color using the feature id
+  // from mapbox - thanks folks!!
+  map.setPaintProperty(name + "-lines", "fill-color",
+          [
+              "concat",
+              "hsla(",
+              [
+                  "*",
+                  ["%", ["id"], 52],
+                  5
+              ],
+              ", 40%, 90%,0.15)"
+          ]);
 }
 
 var community_bounds = {};
@@ -124,7 +138,7 @@ map.on("load", function () {
           visibility: "none",
         },
         paint: {
-          "line-color": "rgba(106,137,204,0.7)",
+          "line-color": "rgba(106,137,204,0.7)"
         },
       }
     );
@@ -180,8 +194,7 @@ map.on("load", function () {
         visibility: "visible",
       },
       paint: {
-        "fill-color": "rgb(110, 178, 181)",
-        "fill-opacity": 0.15
+        "fill-color": "rgba(110, 178, 181, 0.15)"
       },
     });
 
@@ -242,13 +255,13 @@ map.on("load", function () {
   }
   // hover to highlight
   $(".community-review-span").hover(function() {
-    map.setPaintProperty(this.id + "line", "line-color", "rgba(0, 0, 0,0.5)");
+    map.setPaintProperty(this.id + "line", "line-color", "rgba(0, 0, 0,1)");
     map.setPaintProperty(this.id + "line", "line-width", 4);
-    map.setPaintProperty(this.id, "fill-opacity", 0.5);
+    map.setPaintProperty(this.id, "fill-color", "rgba(110, 178, 181, 0.5)");
   }, function () {
     map.setPaintProperty(this.id + "line", "line-color", "rgba(0, 0, 0,0.2)");
     map.setPaintProperty(this.id + "line", "line-width", 2);
-    map.setPaintProperty(this.id, "fill-opacity", 0.15);
+    map.setPaintProperty(this.id, "fill-color", "rgba(110, 178, 181, 0.15)");
   });
   // loading icon
   $(".loader").delay(500).fadeOut(500);

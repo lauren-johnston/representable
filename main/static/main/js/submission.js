@@ -57,19 +57,32 @@ function newBoundariesLayer(name) {
   map.addLayer(
     {
       id: name + "-lines",
-      type: "line",
+      type: "fill",
       source: name,
       "source-layer": "boundaries_" + BOUNDARIES_ABBREV[removeLastChar(name)] + "_" + name.slice(-1),
       layout: {
         visibility: "none"
       },
       paint: {
-        "line-color": "rgba(106,137,204,0.7)",
+        "fill-outline-color": "rgba(0,0,0,0.7)",
+        "fill-color": "rgba(0,0,0,0)",
       }
     }
   );
+  // Set polygon fill color using the feature id
+  // from mapbox - thanks folks!!
+  map.setPaintProperty(name + "-lines", "fill-color",
+          [
+              "concat",
+              "hsla(",
+              [
+                  "*",
+                  ["%", ["id"], 52],
+                  5
+              ],
+              ", 40%, 90%,0.7)"
+          ]);
 }
-
 function sanitizePDF(x) {
   x = x.replace(/ /g, "_");
   x = x.replace("____________________________", "");
@@ -105,6 +118,7 @@ map.on("load", function () {
         },
         paint: {
           "line-color": "rgba(106,137,204,0.7)",
+          "line-width": 2,
         },
       }
     );
@@ -119,6 +133,7 @@ map.on("load", function () {
         },
         paint: {
           "line-color": "rgba(106,137,204,0.7)",
+          "line-width": 2,
         },
       }
     );
